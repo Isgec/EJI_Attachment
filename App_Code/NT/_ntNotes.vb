@@ -20,6 +20,7 @@ Namespace SIS.NT
     Private _FK_Note_Notes_UserID As SIS.QCM.qcmUsers = Nothing
     Public Property ColorID As String = ""
     Public Property TableDescription As String = ""
+    Public Property ChildNotesID As String = ""
     Public ReadOnly Property ForeColor() As System.Drawing.Color
       Get
         Dim mRet As System.Drawing.Color = Drawing.Color.Blue
@@ -213,11 +214,12 @@ Namespace SIS.NT
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesId", SqlDbType.VarChar, 201, Record.NotesId)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesHandle", SqlDbType.VarChar, 201, Record.NotesHandle)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@IndexValue", SqlDbType.VarChar, 201, Record.IndexValue)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title", SqlDbType.VarChar, 501, Record.Title)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.VarChar, 20001, Record.Description)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title", SqlDbType.VarChar, Integer.MaxValue, Record.Title)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.VarChar, Integer.MaxValue, Record.Description)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@UserId", SqlDbType.NVarChar, 9, Record.UserId)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Created_Date", SqlDbType.DateTime, 21, Record.Created_Date)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SendEmailTo", SqlDbType.VarChar, 501, IIf(Record.SendEmailTo = "", Convert.DBNull, Record.SendEmailTo))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SendEmailTo", SqlDbType.VarChar, Integer.MaxValue, IIf(Record.SendEmailTo = "", Convert.DBNull, Record.SendEmailTo))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ChildNotesID", SqlDbType.VarChar, 201, IIf(Record.ChildNotesID = "", Convert.DBNull, Record.ChildNotesID))
           Cmd.Parameters.Add("@Return_NotesId", SqlDbType.VarChar, 201)
           Cmd.Parameters("@Return_NotesId").Direction = ParameterDirection.Output
           Con.Open()
@@ -240,7 +242,7 @@ Namespace SIS.NT
       Sql &= "INNER Join Note_Handle As NH ON NH.NotesHandle = NN.NotesHandle "
       Sql &= "INNER Join aspnet_users As EMP ON EMP.LoginId= NN.USerId "
       Sql &= "Left outer Join Note_UserColor As NUC ON NUC.UserId= NN.UserId "
-      Sql &= " Where NN.NotesHandle ='" & hndl & "' and NN.IndexValue='" & indx & "' order by NN.Notes_RunningNo"
+      Sql &= " Where NN.NotesHandle ='" & hndl & "' and NN.IndexValue='" & indx & "' order by NN.Created_Date DESC"
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()
           Cmd.CommandType = CommandType.Text
@@ -284,11 +286,12 @@ Namespace SIS.NT
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesId",SqlDbType.VarChar,201, Record.NotesId)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesHandle",SqlDbType.VarChar,201, Record.NotesHandle)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@IndexValue",SqlDbType.VarChar,201, Record.IndexValue)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title",SqlDbType.VarChar,501, Record.Title)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description",SqlDbType.VarChar,20001, Record.Description)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@UserId",SqlDbType.NVarChar,9, Record.UserId)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Created_Date",SqlDbType.DateTime,21, Record.Created_Date)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SendEmailTo",SqlDbType.VarChar,501, Iif(Record.SendEmailTo= "" ,Convert.DBNull, Record.SendEmailTo))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title", SqlDbType.VarChar, Integer.MaxValue, Record.Title)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.VarChar, Integer.MaxValue, Record.Description)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@UserId", SqlDbType.NVarChar, 9, Record.UserId)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Created_Date", SqlDbType.DateTime, 21, Record.Created_Date)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SendEmailTo", SqlDbType.VarChar, Integer.MaxValue, IIf(Record.SendEmailTo = "", Convert.DBNull, Record.SendEmailTo))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ChildNotesID", SqlDbType.VarChar, 201, IIf(Record.ChildNotesID = "", Convert.DBNull, Record.ChildNotesID))
           Cmd.Parameters.Add("@Return_NotesId", SqlDbType.VarChar, 201)
           Cmd.Parameters("@Return_NotesId").Direction = ParameterDirection.Output
           Con.Open()
@@ -337,11 +340,12 @@ Namespace SIS.NT
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesId",SqlDbType.VarChar,201, Record.NotesId)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesHandle",SqlDbType.VarChar,201, Record.NotesHandle)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@IndexValue",SqlDbType.VarChar,201, Record.IndexValue)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title",SqlDbType.VarChar,501, Record.Title)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description",SqlDbType.VarChar,20001, Record.Description)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@UserId",SqlDbType.NVarChar,9, Record.UserId)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Created_Date",SqlDbType.DateTime,21, Record.Created_Date)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SendEmailTo",SqlDbType.VarChar,501, Iif(Record.SendEmailTo= "" ,Convert.DBNull, Record.SendEmailTo))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title", SqlDbType.VarChar, Integer.MaxValue, Record.Title)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.VarChar, Integer.MaxValue, Record.Description)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@UserId", SqlDbType.NVarChar, 9, Record.UserId)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Created_Date", SqlDbType.DateTime, 21, Record.Created_Date)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@SendEmailTo", SqlDbType.VarChar, Integer.MaxValue, IIf(Record.SendEmailTo = "", Convert.DBNull, Record.SendEmailTo))
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@ChildNotesID", SqlDbType.VarChar, 201, IIf(Record.ChildNotesID = "", Convert.DBNull, Record.ChildNotesID))
           Cmd.Parameters.Add("@RowCount", SqlDbType.Int)
           Cmd.Parameters("@RowCount").Direction = ParameterDirection.Output
           _RecordCount = -1

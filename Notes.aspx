@@ -1,120 +1,570 @@
-﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Notes.aspx.vb" Inherits="Notes" %>
-
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="Notes.aspx.vb" ClientIDMode="Static" Inherits="NotesNew" %>
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head runat="server">
-    <title></title>
+  <title>ISGEC-Notes</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="Res/fa/css/all.css" rel="stylesheet" />
   <style>
-    .row_c{
-      display:flex;
-      justify-content: center;
+    html, body {
+      background-color: black;
+      font-family: 'Courier New';
+      font-size: 16px;
     }
-    .row_l{
+    p{
+      margin:2px;
+      font-size:14px;
+      font-weight:bold;
+    }
+
+    .nt-conainer {
+      position:absolute;
+      top:0px;
+      right:0px;
+      bottom:0px;
+      left:0px;
+      display: flex;
+      flex-direction: column;
+      margin: 3px !important;
+      border-radius: 6px;
+      background-color: white;
+    }
+
+    .nt-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      background-color: darkcyan;
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+      padding: 2px;
+      color: white;
+    }
+
+    .nt-body {
+      height: 100%;
+      padding: 2px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      scrollbar-base-color: red;
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+    }
+
+    .nt-input-box {
+      width: 100%;
+      border: 1pt solid gray;
+      border-radius: 4px;
+      font-family: 'Courier New';
+      font-size: 12px;
+    }
+
+    .nt-but-danger {
+      border-radius: 4px;
+      border: 1pt solid #ff0000;
+      background-color: crimson;
+      color: white;
+      font-family: 'Courier New';
+      font-size: 14px;
+    }
+
+      .nt-but-danger:hover {
+        border-radius: 4px;
+        border: 1pt solid #ff0000;
+        background-color: #fa7d7d;
+        color: white;
+      }
+    .nt-but-primary {
+      border-radius: 4px;
+      border: 1pt solid #1f336d;
+      background-color:#2f5fe9;
+      color: white;
+      font-family: 'Courier New';
+      font-size: 14px;
+    }
+
+      .nt-but-primary:hover {
+        border-radius: 4px;
+        border: 1pt solid #1f336d;
+        background-color: #698bed;
+        color: white;
+      }
+    .nt-but-grey {
+      border-radius: 4px;
+      border: 1pt solid #b7b5b5;
+      background-color:#d7d5d5;
+      color:black;
+      font-family: 'Courier New';
+      font-size: 14px;
+    }
+
+      .nt-but-grey:hover {
+        border-radius: 4px;
+        border: 1pt solid #b7b5b5;
+        background-color:#f2f2f2;
+        color:red;
+      }
+    .nt-but-readmore {
+      border-radius: 4px;
+      border: 1pt solid #b7b5b5;
+      background-color:#d7d5d5;
+      color:black;
+      font-family:Tahoma;
+      font-weight:bold;
+      font-size: 8px;
+    }
+
+      .nt-but-readmore:hover {
+        border-radius: 4px;
+        border: 1pt solid #b7b5b5;
+        background-color:#f2f2f2;
+        color:red;
+      }
+
+    .nt-but-success {
+      border-radius: 4px;
+      border: 1pt solid #049317;
+      background-color: #06bf1e;
+      color: white;
+      font-family: 'Courier New';
+      font-size: 14px;
+    }
+
+      .nt-but-success:hover {
+        border-radius: 4px;
+        background-color: #05fa25;
+        color: black;
+      }
+
+    .nt-modal-container{
+      display: none; 
+      position: fixed;
+      z-index: 1; 
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow:hidden;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .nt-newNote {
+      border: 1pt solid #b7b5b5;
+      border-radius: 6px;
+      background-color: #dddbdb;
+      margin:5% auto;
+      padding: 10px;
+      width:80%;
+    }
+    .nt-displayNote {
+      border: 1pt solid #b7b5b5;
+      border-radius: 6px;
+      background-color: #dddbdb;
+      margin:5% auto;
+      padding: 10px;
+      width:80%;
+      height:80%;
+      overflow-y:scroll;
+      scrollbar-base-color:burlywood;
+    }
+
+    .nt-displayNoteContent {
+      font-family:Tahoma;
+      font-size:16px;
+    }
+
+    .nt-newNote-but {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin: 10px;
+    }
+
+    .nt-otherNote {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+
+    .nt-otherNote-msg {
+      display: flex;
+      flex-direction: column;
+      border: 1pt solid #b7b5b5;
+      border-radius: 6px;
+      background-color: #dddbdb;
+      max-width: 80%;
+      padding: 4px;
+      margin: 6px;
+    }
+
+    .nt-otherNote-msg-h {
       display:flex;
       flex-direction:row;
+      justify-content:space-between;
+      background-color: royalblue;
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+      font-family:Tahoma;
+      font-size:8px;
+      font-weight:bold;
+      padding: 5px;
+      color: white;
+    }
+
+    .nt-otherNote-msg-b {
+      background-color: lightyellow;
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+      font-size:12px;
+      margin: 2px;
+      color: black;
+    }
+
+    .nt-note-attachment {
+      background-color: lightgreen;
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+      margin: 0px 0px 0px 0px;
+      color: black;
+    }
+
+    .nt-note-attachment-link {
+      margin: 2px;
+      color: black;
+      font-family: 'Courier New';
+      font-size: 12px;
+    }
+
+    .nt-myNote {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+
+    .nt-myNote-msg {
+      display: flex;
+      flex-direction: column;
+      border: 1pt solid #b7b5b5;
+      border-radius: 6px;
+      background-color: #dddbdb;
+      max-width: 80%;
+      padding: 4px;
+      margin: 6px;
+    }
+
+    .nt-myNote-msg-h {
+      display:flex;
+      flex-direction:row;
+      justify-content:space-between;
+      background-color: #04aeae;
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+      font-family:Tahoma;
+      font-size:8px;
+      font-weight:bold;
+      padding: 5px;
+      color: white;
+    }
+
+    .nt-myNote-msg-b {
+      background-color: #78e1e1;
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+      font-size:12px;
+      margin: 2px;
+      color: black;
+    }
+    .nt-sendto {
+      color:crimson;
+      font-size:12px;
+      cursor:pointer;
+    }
+    .nt-icon{
+      cursor:pointer;
+    }
+    .nt-icon:hover{
+      color:gold;
+    }
+    .nt-div-row{
+      margin:2px;
+    }
+    .nt-thumb{
+      height:102px;
+      width:100%;
+      padding:1px;
+      background-color:black;
+      text-align:center;
+      vertical-align:middle;
+    }
+    .nt-fullimg{
+      height:100%;
+      width:100%;
+      padding:1px;
+      background-color:black;
+      text-align:center;
+      vertical-align:middle;
+    }
+
+    .nt-selectedfile-div{
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+    }
+    .nt-selectedfile-list{
+      margin:2px;
+      padding:2px;
+      color:blue;
+      font-family:Tahoma;
+      font-size:10px;
+    }
+    .nt-err-msg{
+      color:red;
+      font-weight:bold;
+      font-family:Tahoma;
+      font-size:12px;
+    }
+    .nt-close {
+      color: #ff6a00;
+      float: right;
+      font-size: 44px;
+      font-weight: bold;
+    }
+    .nt-close:hover,
+    .nt-close:focus {
+      color: red;
+      text-decoration: none;
+      cursor: pointer;
     }
   </style>
+  <script>
+    function $get(str) {
+      return document.getElementById(str);
+    }
+    var nt_script = {
+      newShown: false,
+      show_new_server: function () {
+        $get('newNote').style.display = 'block';
+        return false;
+      },
+      show_new: function (o) {
+        $get('F_ChildNotesID').value = '';
+        if (typeof (o) != 'undefined') {
+          $get('txtMailTo').value = o.innerText.trim();
+          $get('F_ChildNotesID').value = o.dataset.notesid;
+        }
+        $get('newNote').style.display = 'block';
+        return false;
+      },
+      hide_new:function(){
+        $get('newNote').style.display = 'none';
+        return false;
+      },
+      display_img: function (z) {
+        var t = $get('displayNoteContent');
+        t.innerHTML = '';
+        if (typeof (z) != 'undefined') {
+          try {
+            t.innerHTML = '<div class=\'nt-fullimg\'><img src=\'' + z.src + '\'/></div>';
+          } catch (e) { }
+        }
+        $get('displayNote').style.display = 'block';
+        return false;
+      },
+
+      display_note: function (z) {
+        var t = $get('displayNoteContent');
+       t.innerHTML='';
+       if (typeof (z) != 'undefined') {
+         t.innerHTML = '<p>'+ $get(z.replace('bs', 'title')).innerHTML + '</p><br/>';
+         t.innerHTML = t.innerHTML + $get(z.replace('bs', 'lp')).innerHTML;
+         try{
+           t.innerHTML = t.innerHTML + $get(z.replace('bs', 'mp')).innerHTML;
+         }catch(e){}
+        }
+        $get('displayNote').style.display = 'block';
+        return false;
+      },
+      hide_display:function(){
+        $get('displayNote').style.display = 'none';
+        return false;
+      },
+      show_read: function (o) {
+        var id = o.id.split('_')[1];
+        var dots = $get('dots_'+id);
+        var moreText = $get('more_'+id);
+        var btnText = $get('cmd_'+id);
+
+        if (dots.style.display === "none") {
+          dots.style.display = "inline";
+          btnText.innerHTML = "Read more";
+          moreText.style.display = "none";
+        } else {
+          dots.style.display = "none";
+          btnText.innerHTML = "Read less";
+          moreText.style.display = "inline";
+        }
+        return false;
+      },
+      download: function (o) {
+        var cmd = $get('cmdDownload');
+        $get('cmdText').value = o.dataset.drid;
+        $get('cmdDownload').click();
+        return true;
+      },
+      choose_file:function() {
+        $get('f_Uploads').click();
+        return false;
+      },
+      CTRLUpload:'',
+      filesSelected: function (evt) {
+        this.CTRLUpload = evt.target;
+        var files = evt.target.files; // FileList object
+        var output = [];
+        for (var i = 0, f; f = files[i]; i++) {
+          var n = f.name.replace(/,/g, '-').replace(/'/g, '-');
+          output.push(
+             '<div class="nt-selectedfile-list">', n, '</div>'
+          );
+        }
+        $get('UploadFileList').innerHTML = output.join('');
+      },
+      add_err:function(x){
+        var de = $get('divErr');
+        de.innerHTML = de.innerHTML + '<li class="nt-err-msg">' + x + '</li>';
+      },
+      clear_err: function () {
+        var de = $get('divErr');
+        de.innerHTML = '';
+        de.style.display = 'none';
+      },
+      show_err: function () {
+        var de = $get('divErr');
+        de.style.display = 'block';
+      },
+      validate_note: function () {
+        this.clear_err();
+        var err = false;
+        var title = $get('txtTitle');
+        var desc = $get('txtDescription');
+        var smail = $get('txtMailTo');
+        var rmail = $get('txtReminderTo');
+        var rdate = $get('txtDate');
+        var atchs = 0;
+        if (typeof(this.CTRLUpload) === 'object') {
+          atchs = this.CTRLUpload.files.length;
+        }
+        if (atchs <= 0) {
+          if (title.value == '' && desc.value == '') {
+            this.add_err('Title & Description or Attachment is required.');
+            err = true;
+          }
+        }
+        if(rmail.value!='' && rdate.value==''){
+          this.add_err('Reminder date required.');
+          err = true;
+        }
+        if (err) {
+          this.show_err();
+          return false;
+        }
+        return true;
+      },
+      submit_note: function () {
+        return this.validate_note();
+      }
+    }
+  </script>
 </head>
-<body style="background-color: #d7d7d7;font-family:Tahoma;">
-  <form id="form1" runat="server">
-    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-    <div style="width:700px;margin:20px auto auto auto;">
-      <div class="row_c">
-        <div style="font-size:14px;font-weight:bold;">Notes for <strong runat="server" id="spIndex"></strong></div>
+<body>
+  <form runat="server" id="form1" enctype="multipart/form-data">
+    <div class="nt-conainer">
+      <%--Header--%>
+      <div class="nt-header">
+        <div id="divHeader" runat="server">
+          
+        </div>
+        <div>
+          <input type="button" class="nt-but-danger" value="New Note" onclick="return nt_script.show_new();" />
+        </div>
       </div>
-      <div class="row_l" style="margin-top:2px;">
-        <asp:Button runat="server" ID="btnNewNotes" Font-Size="12px" OnClick="btnNewNotes_Click" Text="New Notes"/>
-      </div>
-      <div style="width: 100%; border: 1px solid black; margin: 2px; min-height: 500px;">
-        <table style="margin-top:10px;width:100%;font-size:14px;">
-          <tr>
-            <td style="font-weight:bold">Title:</td>
-            <td>
-              <asp:TextBox runat="server" ID="txtTitle" Width="500"></asp:TextBox></td>
-          </tr>
-          <tr style="height: 10px"></tr>
-          <tr>
-            <td style="text-align: start; font-weight: bold">Desription</td>
-            <td>
-              <asp:TextBox runat="server" ID="txtDescription" TextMode="MultiLine" Height="300" Width="500" />
-            </td>
-          </tr>
-          <tr style="height: 10px"></tr>
-          <tr>
-            <td style="font-weight: bold">Send mail to:</td>
-            <td>
-              <asp:TextBox runat="server" ID="txtMailTo" Width="500" />
-               
-            </td>
-          </tr>
+      <%--Body--%>
+      <div class="nt-body" style="background-color: aqua;">
+        <%--New Note--%>
+        <div id="newNote" class="nt-modal-container">
+          <div  class="nt-newNote">
+            <div style="font-size: 14px; font-weight: bold; margin: 6px;">
+            <asp:TextBox ID="F_ChildNotesID" runat="server" style="display:none;" ></asp:TextBox>
+               NEW Note:
+            </div>
+            <div id="divErr" runat="server" style="display:none;padding:10px;text-align:center;">
 
-          <tr style="height: 10px"></tr>
+            </div>
+            <div>
+              <asp:TextBox ID="txtTitle" runat="server" CssClass="nt-input-box" Height="30px" ValidationGroup="submit" placeholder="Title"></asp:TextBox>
+            </div>
+            <div style="padding-right:2px;">
+              <asp:TextBox ID="txtDescription" runat="server" CssClass="nt-input-box" style="min-height:150px;resize:vertical;" placeholder="Description" TextMode="MultiLine"></asp:TextBox>
+            </div>
+            <div style="padding-right:2px;">
+              <asp:TextBox id="txtMailTo" runat="server" class="nt-input-box" style="min-height:40px;resize:vertical;" placeholder="Send Mail to <email id 1>,<email id 2>..." TextMode="MultiLine"></asp:TextBox>
+            </div>
+            <div style="font-size: 14px; font-weight: bold; margin: 6px;">
+              Reminder Setting:
+            </div>
+            <div style="padding-right:2px;">
+              <asp:TextBox id="txtReminderTo" runat="server" class="nt-input-box" style="min-height:40px;resize:vertical;" placeholder="Reminder Mail to <email id 1>,<email id 2>..." TextMode="MultiLine"></asp:TextBox>
+            </div>
+            <div>
+              <asp:TextBox id="txtDate" type="date" runat="server" class="nt-input-box" style="height:30px;" placeholder="Reminder Date [DD/MM/YYYY]"/>
+            </div>
+            <div class="nt-newNote-but">
+              <div class="nt-selectedfile-div">
+                <div style="color:deeppink;font-family:Tahoma;font-size:10px;font-style:italic;">Selected File(s):</div>
+                <div id='UploadFileList'></div>
+              </div>
+             <div style="display:none;">
+                <input type="file" id="f_Uploads" runat="server" name="f_Uploads[]" multiple="multiple" onchange="return nt_script.filesSelected(event);">
+              </div>
+              <div style="margin-left: 10px;">
+                <asp:Button ID="cmdAttach" runat="server" CssClass="nt-but-primary" Text="Attachment" OnClientClick="return nt_script.choose_file();" />
+              </div>
+              <div style="margin-left: 10px;">
+                <asp:Button ID="cmdClose" runat="server" CssClass="nt-but-danger" Text="Close" OnClientClick="return nt_script.hide_new(this);" />
+              </div>
+              <div style="margin-left: 10px;">
+                <asp:Button ID="cmdSubmit" runat="server" CssClass="nt-but-success" Text="Submit" OnClientClick="return nt_script.submit_note();" />
+              </div>
+            </div>
+          </div>
 
-          <tr>
-            <td style="font-weight: bold">Reminder:</td>
-            <td>E-mail Id:<asp:TextBox ID="txtMailIdReminder" runat="server" Width="430" />
-            </td>
-          </tr>
-          <tr style="height: 10px"></tr>
-          <tr>
-            <td></td>
-            <td>Date :<asp:TextBox runat="server" ID="txtDate" />
-                <asp:TextBox runat="server" ID="txtTime" Text="9:00" ReadOnly="true" Enabled="false" Visible="false" />
-            </td>
-          </tr>
-          <tr style="height: 20px"></tr>
-          <tr>
-            <td></td>
-            <td>
-              <asp:Button runat="server" ID="btnSaveNotes" OnClick="btnSaveNotes_Click" Text="Submit" Width="100" />
-              <asp:Button runat="server" ID="btnDeleteNotes" OnClick="btnDeleteNotes_Click" Text="Delete" Visible="false" />
-              <asp:Button runat="server" ID="btnAttachment" OnClick="btnAttachment_Click" Text="Attachment" /></td>
-          </tr>
-          <tr style="height: 10px"></tr>
-        </table>
-      </div>
-      <div style="font-size:12px;font-weight:bold;margin-top:10px;">Notes List</div>
-      <div style="background-color: #cccaca; width: 100%; min-height: 100px; font-weight: bold; overflow: hidden; font-size: 12px;">
-        <asp:Repeater runat="server" ID="rptNotes" OnItemDataBound="rptNotes_ItemDataBound" DataSourceID="ODS1">
-          <ItemTemplate>
-            <table style="width:100%;">
-              <tr id="row" runat="server">
-                <td>
-                  <asp:HiddenField Value='<%#Eval("ColorId") %>' runat="server" ID="hdfUserID" />
-                  <asp:HiddenField Value='<%#Eval("Notes_RunningNo") %>' runat="server" ID="Notes_RunningNo" />
-                </td>
-                <td style="width:400px">
-                  <asp:LinkButton Text='<%#If(Eval("Description").ToString().Length > 80, Eval("Description").ToString().Substring(0, 80), Eval("Title").ToString()) %>' runat="server" ID="lnkUpdate" CommandArgument='<%#Eval("UserId") & "&" & Eval("NotesId") %>' OnClick="lnkUpdate_Click"></asp:LinkButton></td>
-                <td><%# Convert.ToDateTime(Eval("Created_Date")).ToString("dd-MM-yyyy HH:mm ")%></td>
-                <td style="text-align:right;"><%#Eval("EmployeeName") %></td>
-              </tr>
-            </table>
-          </ItemTemplate>
-        </asp:Repeater>
-        <asp:ObjectDataSource
-          ID="ODS1"
-          DataObjectTypeName="SIS.NT.ntNotes"
-          OldValuesParameterFormatString="original_{0}"
-          SelectMethod="GetNotesByHandleIndex"
-          TypeName="SIS.NT.ntNotes"
-          EnablePaging="False"
-          runat="server">
-          <SelectParameters>
-            <asp:QueryStringParameter Name="hndl" QueryStringField="handle" Direction="Input" DbType="String" />
-            <asp:QueryStringParameter Name="indx" QueryStringField="Index" Direction="Input" DbType="String" />
-          </SelectParameters>
-        </asp:ObjectDataSource>
+        </div>
+        <%--Old Notes List--%>
+        <div id="oldNote" runat="server" >
+          <input type="button" value="dummy" id="cmdDownload" runat="server" onserverclick="cmdDownload_Click" style="display:none;" />
+          <asp:TextBox ID="cmdText" runat="server" style="display:none;"></asp:TextBox>
+
+        </div>
+        <%--Display Note--%>
+        <div id="displayNote" class="nt-modal-container">
+          <div>
+          <span class="nt-close" onclick="return nt_script.hide_display();">&times;</span>
+          </div>
+         <div class="nt-displayNote">
+            <div class="nt-displayNoteContent" id="displayNoteContent">
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-    <asp:HiddenField runat="server" ID="hdfNoteId" />
-    <asp:HiddenField runat="server" ID="hdfNewNoteId" />
-    <asp:HiddenField runat="server" ID="hdfUser" />
   </form>
-  <br/>
-  <br/>
-  <br/>
-  <br/>
-
+  <div id="afterLoad" runat="server"></div>
+  <script>
+    //document Ready
+    window.history.replaceState('', '', window.location.href);
+  </script>
 </body>
 </html>

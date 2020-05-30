@@ -81,7 +81,7 @@ Partial Class Attachment
           .t_hndl = AthHandle
           .t_indx = AthIndex
           .t_prcd = "EJIMAIN"
-          .t_fnam = IO.Path.GetFileName(fu.FileName)
+          .t_fnam = IO.Path.GetFileName(fu.FileName).Replace(",", "-").Replace("'", "-")
           .t_lbcd = LibraryID
           .t_atby = CreatedBy
           .t_aton = Now.ToString("dd/MM/yyyy")

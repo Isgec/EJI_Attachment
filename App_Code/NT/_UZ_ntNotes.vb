@@ -7,6 +7,18 @@ Imports System.Net.Mail
 
 Namespace SIS.NT
   Partial Public Class ntNotes
+    Public ReadOnly Property NotesDate As String
+      Get
+        Dim cDt As DateTime = Convert.ToDateTime(Created_Date)
+        If Now.Date = cDt.Date Then
+          Return cDt.ToString("hh:mm tt")
+        ElseIf Now.AddDays(-1).Date = cDt.Date Then
+          Return "Yesterday " & cDt.ToString("hh:mm tt")
+        Else
+          Return cDt.ToString("dd-MM-yyyy")
+        End If
+      End Get
+    End Property
     Private _ReminderTo As String = ""
     Private _ReminderDateTime As String = ""
     Public Property ReminderTo() As String
@@ -132,24 +144,6 @@ Namespace SIS.NT
       Dim _Result As Integer = ntNotesDelete(Record)
       Return _Result
     End Function
-    Public Shared Function SetDefaultValues(ByVal sender As System.Web.UI.WebControls.FormView, ByVal e As System.EventArgs) As System.Web.UI.WebControls.FormView
-      With sender
-        Try
-          CType(.FindControl("F_Notes_RunningNo"), TextBox).Text = 0
-          CType(.FindControl("F_NotesId"), TextBox).Text = ""
-          CType(.FindControl("F_NotesHandle"), TextBox).Text = ""
-          CType(.FindControl("F_IndexValue"), TextBox).Text = ""
-          CType(.FindControl("F_Title"), TextBox).Text = ""
-          CType(.FindControl("F_Description"), TextBox).Text = ""
-          CType(.FindControl("F_UserId"), TextBox).Text = ""
-          CType(.FindControl("F_UserId_Display"), Label).Text = ""
-          CType(.FindControl("F_Created_Date"), TextBox).Text = ""
-          CType(.FindControl("F_SendEmailTo"), TextBox).Text = ""
-        Catch ex As Exception
-        End Try
-      End With
-      Return sender
-    End Function
     Public Shared Function AddRequestFiles(ByVal Request As HttpRequest, ByVal PrimaryKey As String) As Boolean
       Dim L_ScriptTimeOut As Integer = 0
       Dim L_SessionTimeOut As Integer = HttpContext.Current.Session.Timeout
@@ -242,7 +236,8 @@ Namespace SIS.NT
       With oMsg
         Dim aIDs() As String = nt.SendEmailTo.Split(",;".ToCharArray)
         For Each tmp As String In aIDs
-            tmp = tmp.Trim
+          tmp = tmp.Trim
+          If tmp = "" Then Continue For
           Try
             .To.Add(New MailAddress(tmp, tmp))
           Catch ex As Exception
@@ -271,12 +266,10 @@ Namespace SIS.NT
         Header &= "<style>"
         Header &= "table{"
 
-        'Header &= "border: solid 1pt black;"
         Header &= "border-collapse:collapse;"
         Header &= "font-family: Tahoma;}"
 
         Header &= "td{"
-        'Header &= "border: solid 1pt black;"
         Header &= "font-family: Tahoma;"
         Header &= "font-size: 12px;"
         Header &= "padding: 2px 2px 4px 4px;"
@@ -290,20 +283,6 @@ Namespace SIS.NT
         Header &= "</style>"
         Header &= "</head>"
         Header &= "<body>"
-        'If AErr.Count > 0 Then
-        '  Header &= "<br/>"
-        '  Header &= "<br/>"
-        '  Header &= "<table>"
-        '  Header &= "<tr><td style=""color: red""><i><b>"
-        '  Header &= "NOTE: Error during composing E-Mail."
-        '  Header &= "</b></i></td></tr>"
-        '  For Each Err As String In AErr
-        '    Header &= "<tr><td color=""red""><i>"
-        '    Header &= Err
-        '    Header &= "</i></td></tr>"
-        '  Next
-        '  Header &= "</table>"
-        'End If
         Dim CloudLink As String = "http://cloud.isgec.co.in/Attachment/Notes.aspx?handle=P_PROJECTACTIVITY_200"
         Dim LocalLink As String = "http://192.9.200.146/Attachment/Notes.aspx?handle=P_PROJECTACTIVITY_200"
         Dim Index As String = nt.IndexValue
@@ -321,13 +300,12 @@ Namespace SIS.NT
         'Header &= "</b></td></tr>"
         'Header &= "</table>"
         Header &= "<br/>"
-        Header &= "<br/>"
         Header &= "<table style='margin-left:10px;width:1000px;'>"
         Header &= "<tr><td><p>"
-        Header &= nt.Description.ToString().Replace("\n", "<br />")
+        Header &= nt.Description.Replace(Chr(10), "<br/>").Replace(Chr(13), "<br/>")
         Header &= "</p></td></tr>"
         Header &= "</table>"
-        Header &= "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />This mail has been triggered to draw your attention on the respective ERP/Joomla module. Please login to respective module to see further details and file attachments"
+        Header &= "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />This mail has been triggered to draw your attention on the respective ERP/Joomla module. Please login to respective module to see further details and file attachments"
         Header &= "</body></html>"
 
         .Body = Header

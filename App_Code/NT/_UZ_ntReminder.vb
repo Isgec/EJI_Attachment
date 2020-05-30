@@ -86,24 +86,8 @@ Namespace SIS.NT
       Return _Result
     End Function
     Public Shared Function UZ_ntReminderDelete(ByVal Record As SIS.NT.ntReminder) As Integer
-      Dim _Result as Integer = ntReminderDelete(Record)
+      Dim _Result As Integer = ntReminderDelete(Record)
       Return _Result
-    End Function
-    Public Shared Function SetDefaultValues(ByVal sender As System.Web.UI.WebControls.FormView, ByVal e As System.EventArgs) As System.Web.UI.WebControls.FormView
-      With sender
-        Try
-        CType(.FindControl("F_ReminderID"), TextBox).Text = 0
-        CType(.FindControl("F_NotesId"), TextBox).Text = ""
-        CType(.FindControl("F_ReminderTo"), TextBox).Text = ""
-        CType(.FindControl("F_ReminderDateTime"), TextBox).Text = ""
-        CType(.FindControl("F_Status"), TextBox).Text = ""
-        CType(.FindControl("F_CreatedDate"), TextBox).Text = ""
-        CType(.FindControl("F_User"), TextBox).Text = ""
-        CType(.FindControl("F_User_Display"), Label).Text = ""
-        Catch ex As Exception
-        End Try
-      End With
-      Return sender
     End Function
   End Class
 End Namespace
