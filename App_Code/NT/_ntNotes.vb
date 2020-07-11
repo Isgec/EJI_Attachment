@@ -234,14 +234,14 @@ Namespace SIS.NT
     Public Shared Function GetNotesByHandleIndex(hndl As String, indx As String) As List(Of SIS.NT.ntNotes)
       Dim Results As New List(Of SIS.NT.ntNotes)
       Dim Sql As String = ""
-      Sql &= "Select NN.*, "
-      Sql &= "NH.TableDescription, "
-      Sql &= "EMP.UserFullName As EmployeeName, "
-      Sql &= "NUC.ColorId "
-      Sql &= " from Note_Notes as NN "
-      Sql &= "INNER Join Note_Handle As NH ON NH.NotesHandle = NN.NotesHandle "
-      Sql &= "INNER Join aspnet_users As EMP ON EMP.LoginId= NN.USerId "
-      Sql &= "Left outer Join Note_UserColor As NUC ON NUC.UserId= NN.UserId "
+      Sql &= " Select NN.*, "
+      Sql &= "  NH.TableDescription, "
+      Sql &= "  EMP.UserFullName As EmployeeName, "
+      Sql &= "  NUC.ColorId "
+      Sql &= " From Note_Notes as NN "
+      Sql &= "  INNER Join Note_Handle As NH ON NH.NotesHandle = NN.NotesHandle "
+      Sql &= "  INNER Join aspnet_users As EMP ON EMP.LoginId= NN.USerId "
+      Sql &= "  Left outer Join Note_UserColor As NUC ON NUC.UserId= NN.UserId "
       Sql &= " Where NN.NotesHandle ='" & hndl & "' and NN.IndexValue='" & indx & "' order by NN.Created_Date DESC"
       Using Con As SqlConnection = New SqlConnection(SIS.SYS.SQLDatabase.DBCommon.GetConnectionString())
         Using Cmd As SqlCommand = Con.CreateCommand()

@@ -36,10 +36,14 @@ Partial Class NotesNew
   End Sub
   Private Sub NotesNew_PreRender(sender As Object, e As EventArgs) Handles Me.PreRender
     If em <> "" Then
-      txtMailTo.Text = em
+      If txtMailTo.Text = "" Then
+        txtMailTo.Text = em
+      End If
     End If
     If tl <> "" Then
-      txtTitle.Text = tl
+      If txtTitle.Text = "" Then
+        txtTitle.Text = tl
+      End If
     End If
     divHeader.InnerHtml = Hd
     LoadData()
