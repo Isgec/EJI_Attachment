@@ -3,6 +3,7 @@ Imports System.Collections.Generic
 Imports System.Data
 Imports System.Data.SqlClient
 Imports System.ComponentModel
+Imports JobProcess
 Namespace SIS.NT
   <DataObject()> _
   Partial Public Class ntNotes
@@ -282,10 +283,10 @@ Namespace SIS.NT
         Using Cmd As SqlCommand = Con.CreateCommand()
           Cmd.CommandType = CommandType.StoredProcedure
           Cmd.CommandText = "spntNotesInsert"
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Notes_RunningNo",SqlDbType.Int,11, Record.Notes_RunningNo)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesId",SqlDbType.VarChar,201, Record.NotesId)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesHandle",SqlDbType.VarChar,201, Record.NotesHandle)
-          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@IndexValue",SqlDbType.VarChar,201, Record.IndexValue)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Notes_RunningNo", SqlDbType.Int, 11, Record.Notes_RunningNo)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesId", SqlDbType.VarChar, 201, Record.NotesId)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@NotesHandle", SqlDbType.VarChar, 201, Record.NotesHandle)
+          SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@IndexValue", SqlDbType.VarChar, 201, Record.IndexValue)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Title", SqlDbType.VarChar, Integer.MaxValue, Record.Title)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@Description", SqlDbType.VarChar, Integer.MaxValue, Record.Description)
           SIS.SYS.SQLDatabase.DBCommon.AddDBParameter(Cmd, "@UserId", SqlDbType.NVarChar, 9, Record.UserId)
@@ -299,6 +300,21 @@ Namespace SIS.NT
           Record.NotesId = Cmd.Parameters("@Return_NotesId").Value
         End Using
       End Using
+      'Whenever Record Is Inserted 
+      'Create Queue
+      Dim BaaNLive As Boolean = Convert.ToBoolean(ConfigurationManager.AppSettings("BaaNLive"))
+      Dim JoomlaLive As Boolean = Convert.ToBoolean(ConfigurationManager.AppSettings("JoomlaLive"))
+      Dim job As New JobProcess.SIS.EDI.ediQueues(BaaNLive, JoomlaLive)
+      With job
+        .EdiKey = Record.NotesHandle
+        .EdiValues = Record.IndexValue.Replace("_", "|")
+      End With
+      Try
+        JobProcess.SIS.EDI.ediQueues.InsertData(job)
+      Catch ex As Exception
+      End Try
+      job = Nothing
+      '======End Of Create Job=====
       Return Record
     End Function
     <DataObjectMethod(DataObjectMethodType.Update, True)> _

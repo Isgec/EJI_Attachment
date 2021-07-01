@@ -50,20 +50,23 @@ Partial Class NotesNew
   End Sub
 
   Private Sub LoadData()
+    Dim LoggedInUser As SIS.QCM.qcmUsers = SIS.QCM.qcmUsers.qcmUsersGetByID(LoginUser)
+    Dim LoggedInUserEMailID As String = LoggedInUser.EMailID
     Dim ntS As List(Of SIS.NT.ntNotes) = SIS.NT.ntNotes.GetNotesByHandleIndex(handle, Index)
     For Each nt As SIS.NT.ntNotes In ntS
+      Dim toInclude As String = IIf(nt.SendEmailTo.IndexOf(LoggedInUserEMailID) >= 0, "", LoggedInUserEMailID)
       Dim ctl As String = ""
       If nt.UserId = LoginUser Then
-        ctl = GetNote(nt, "myNote")
+        ctl = GetNote(nt, "myNote", toInclude)
       Else
-        ctl = GetNote(nt, "otherNote")
+        ctl = GetNote(nt, "otherNote", toInclude)
       End If
       If ctl <> "" Then
         oldNote.Controls.Add(New LiteralControl(ctl))
       End If
     Next
   End Sub
-  Private Function GetNote(nt As SIS.NT.ntNotes, clsStr As String) As String
+  Private Function GetNote(nt As SIS.NT.ntNotes, clsStr As String, EMailIDtoInclude As String) As String
     Dim mRet As String = ""
     mRet &= "          <div class='nt-" & clsStr & "'>"
     mRet &= "            <div class='nt-" & clsStr & "-msg'>"
@@ -93,7 +96,7 @@ Partial Class NotesNew
     End If
     mRet &= "                </div>"
     If nt.SendEmailTo <> "" Then
-      mRet &= "              <p class='nt-sendto' data-notesid='" & nt.NotesId & "' onclick='return nt_script.show_new(this);'>"
+      mRet &= "              <p class='nt-sendto' data-notesid='" & nt.NotesId & "' data-toinclude='" & EMailIDtoInclude & "' onclick='return nt_script.show_new(this);'>"
       mRet &= "                " & nt.SendEmailTo
       mRet &= "              </p>"
     End If

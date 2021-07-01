@@ -354,7 +354,16 @@
       show_new: function (o) {
         $get('F_ChildNotesID').value = '';
         if (typeof (o) != 'undefined') {
-          $get('txtMailTo').value = o.innerText.trim();
+          var xStr = o.innerText.trim();
+          var iStr = o.dataset.toinclude;
+          if (iStr != '') {
+            if (xStr != '') {
+              xStr = xStr + ',' + iStr;
+            } else {
+              xStr = iStr;
+            }
+          }
+          $get('txtMailTo').value = xStr;
           $get('F_ChildNotesID').value = o.dataset.notesid;
           this.setKeyWords();
         }
