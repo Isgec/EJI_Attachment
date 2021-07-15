@@ -14,16 +14,16 @@ Namespace SIS.SYS.SQLDatabase
     Public Shared Function GetBaaNConnectionString() As String
       BaaNLive = Convert.ToBoolean(ConfigurationManager.AppSettings("BaaNLive"))
       If BaaNLive Then
-        Return "Data Source=192.9.200.129;Initial Catalog=inforerpdb;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=lalit;Password=scorpions"
+        Return "Data Source=ganesha;Initial Catalog=inforerpdb;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=lalit;Password=scorpions"
       Else
-        Return "Data Source=192.9.200.45;Initial Catalog=inforerpdb;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=lalit;Password=scorpions"
+        Return "Data Source=gstdrill04;Initial Catalog=inforerpdb;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=lalit;Password=scorpions"
       End If
     End Function
     Public Shared Function GetConnectionString() As String
       JoomlaLive = Convert.ToBoolean(ConfigurationManager.AppSettings("JoomlaLive"))
 
       If JoomlaLive Then
-        Return "Data Source=192.9.200.150;Initial Catalog=IJTPerks;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=sa;Password=isgec12345"
+        Return "Data Source=perk03;Initial Catalog=IJTPerks;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=sa;Password=isgec12345"
       Else
         Return "Data Source=.\LGSQL;Initial Catalog=IJTPerks;Integrated Security=False;User Instance=False;Persist Security Info=True;User ID=sa;Password=isgec12345"
       End If

@@ -284,7 +284,7 @@ Namespace SIS.NT
         Header &= "</head>"
         Header &= "<body>"
         Dim CloudLink As String = "http://cloud.isgec.co.in/Attachment/Notes.aspx?handle=P_PROJECTACTIVITY_200"
-        Dim LocalLink As String = "http://192.9.200.146/Attachment/Notes.aspx?handle=P_PROJECTACTIVITY_200"
+        Dim LocalLink As String = "http://perk01/Attachment/Notes.aspx?handle=P_PROJECTACTIVITY_200"
         Dim Index As String = nt.IndexValue
         Dim User As String = nt.UserId
         Dim canEdit As String = "n"

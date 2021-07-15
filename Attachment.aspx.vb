@@ -137,7 +137,7 @@ Partial Class Attachment
       'Both Open in New Window and open in same window
       'Given: This is for open in same window
       'Open in new window is called from Client side javascript
-      'http://192.9.200.146/Attachment/Attachment.aspx?AthHandle=J_IDMSPOSTORDERREC&Index=2835_1_1540_1529&AttachedBy=0340&ed=n
+      'http://perk01/Attachment/Attachment.aspx?AthHandle=J_IDMSPOSTORDERREC&Index=2835_1_1540_1529&AttachedBy=0340&ed=n
       Try
         Dim t_drid As String = gvAttachment.DataKeys(e.CommandArgument).Values("t_drid")
         Dim rDoc As EJI.ediAFile = EJI.ediAFile.GetFileByRecordID(t_drid)
